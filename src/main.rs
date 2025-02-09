@@ -1,10 +1,8 @@
 use std::env;
 use std::fs::{self, File};
 use std::io::Read;
-use std::io;
 use std::process;
 use regex::Regex;
-use std::path::{Path, PathBuf};
 
 fn main() {
     // 获取命令行参数
@@ -57,42 +55,42 @@ fn main() {
             }
         })
         .collect::<Vec<String>>()
-        .join("\n"); // 将所有处理过的行重新连接成文件内容
+        .join(" && "); // 将所有处理过的行重新连接成文件内容
 
-    // 在文件内容前加一行 "cd ../"
-    let final_content = format!("cd ../\n{}", modified_content);
+    // 在文件内容前加一行 "cd p"
+    // let final_content = format!("cd p\n{}", modified_content);
 
     // 修改文件后缀名为 .cmd
-    let path = Path::new(file_path);
-    let new_file_path = path.with_extension("cmd");
+    // let path = Path::new(file_path);
+    // let new_file_path = path.with_extension("cmd");
 
     
     // 将修改后的内容写入新的文件
-    match fs::write(&new_file_path, final_content) {
-        Ok(_) => println!("File content updated and saved as .cmd file."),
+    match fs::write(&file_path, modified_content) {
+        Ok(_) => println!("File content updated."),
         Err(e) => {
             eprintln!("Error writing to file: {}", e);
             process::exit(1);
         }
     }
 
-    let _ = to_crlf(new_file_path);
+    // let _ = to_crlf(new_file_path);
 
-    match fs::remove_file(&file_path) {
-        Ok(_) => println!("Original File deleted: {}", &file_path),
-        Err(e) => eprintln!("Error deleting original file: {}", e),
-    };
+    // match fs::remove_file(&file_path) {
+    //     Ok(_) => println!("Original File deleted: {}", &file_path),
+    //     Err(e) => eprintln!("Error deleting original file: {}", e),
+    // };
     
 }
-fn to_crlf(file_path: PathBuf) -> io::Result<()> {
-    // 读取文件内容
-    let content = fs::read_to_string(&file_path)?;
+// fn to_crlf(file_path: PathBuf) -> io::Result<()> {
+//     // 读取文件内容
+//     let content = fs::read_to_string(&file_path)?;
     
-    // 修改换行符为 CR-LF
-    let updated_content = content.replace("\n", "\r\n").replace("\r\r\n", "\r\n");
+//     // 修改换行符为 CR-LF
+//     let updated_content = content.replace("\n", "\r\n").replace("\r\r\n", "\r\n");
 
-    // 写回文件
-    fs::write(&file_path, updated_content)?;
+//     // 写回文件
+//     fs::write(&file_path, updated_content)?;
     
-    Ok(())
-}
+//     Ok(())
+// }
